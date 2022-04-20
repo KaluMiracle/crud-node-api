@@ -16,4 +16,4 @@ app.use(json())
 import postsRouter from './routes/post.js'
 app.use('/posts', postsRouter)
 
-app.listen(3000, () => console.log('Server Started'))
+app.listen(3001, () => console.log('Server Started'))

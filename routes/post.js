@@ -4,6 +4,8 @@ import Post from '../models/test.js'
 
 // Getting all
 postsRouter.get('/', async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
   try {
     const Posts = await Post.find()
     res.json(Posts)
@@ -21,11 +23,11 @@ postsRouter.get('/:id', getPost, (req, res) => {
 postsRouter.post('/', async (req, res) => {
   console.log(req.body)
   
-  const Post = new Post({
+  const Data = new Post({
     ...req.body
   })
   try {
-    const newPost = await Post.save()
+    const newPost = await Data.save()
     res.status(201).json(newPost)
   } catch (err) {
     res.status(400).json({ message: err.message })
@@ -34,12 +36,13 @@ postsRouter.post('/', async (req, res) => {
 
 // Updating One
 postsRouter.patch('/:id', getPost, async (req, res) => {
-  if (req.body.title != null) {
-    res.Post.title = req.body.title
-  }
-  if (req.body.subscribedToChannel != null) {
-    res.Post.subscribedToChannel = req.body.subscribedToChannel
-  }
+
+  Object.keys(req.body).forEach((key,index)=>{
+    if (req.body[key] != null) {
+      res.Post[key] = req.body[key]
+    }
+  })
+  
   try {
     const updatedPost = await res.Post.save()
     res.json(updatedPost)
@@ -59,17 +62,17 @@ postsRouter.delete('/:id', getPost, async (req, res) => {
 })
 
 async function getPost(req, res, next) {
-  let Post
+  let Data
   try {
-    Post = await Post.findById(req.params.id)
-    if (Post == null) {
+    Data = await Post.findById(req.params.id)
+    if (Data == null) {
       return res.status(404).json({ message: 'Cannot find Post' })
     }
   } catch (err) {
     return res.status(500).json({ message: err.message })
   }
 
-  res.Post = Post
+  res.Post = Data
   next()
 }
 
